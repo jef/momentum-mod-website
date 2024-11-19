@@ -1,27 +1,9 @@
-const { FlatCompat } = require('@eslint/eslintrc');
-const js = require('@eslint/js');
+import base from '../eslint.config.js';
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended
-});
-
-module.exports = [
-  ...compat.extends('../.eslintrc.js'),
+export default [
+  ...base,
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    rules: {
-      'unicorn/no-process-exit': ['off']
-    }
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    // Override or add rules here
-    rules: {}
-  },
-  {
-    files: ['**/*.js', '**/*.jsx'],
-    // Override or add rules here
-    rules: {}
+    files: ['*.ts'],
+    rules: { 'unicorn/no-process-exit': ['off'] }
   }
 ];
