@@ -526,7 +526,7 @@ describe('Session', () => {
                     flags: [0],
                     replayHash: randomHash(),
                     time: i + 0.005,
-                    stats: { create: { overall: { jumps: 1 } } },
+                    splits: {},
                     user: { connect: { id: user.id } },
                     rank: i + 1
                   },

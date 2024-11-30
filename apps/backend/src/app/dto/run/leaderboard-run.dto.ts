@@ -3,7 +3,7 @@ import {
   Gamemode,
   LeaderboardRun,
   runPath,
-  RunStats,
+  RunSplits,
   Style,
   TrackType
 } from '@momentum/constants';
@@ -88,7 +88,7 @@ export class LeaderboardRunDto implements LeaderboardRun {
   readonly flags: number[];
 
   @ApiProperty({ description: 'WIP run stats data' })
-  readonly stats: RunStats;
+  readonly splits: RunSplits;
 
   @ApiProperty({
     type: Number,

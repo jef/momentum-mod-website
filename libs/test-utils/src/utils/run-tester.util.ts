@@ -1,17 +1,10 @@
-﻿import {
-  BaseStats,
-  Replay,
-  ReplayFileWriter,
-  RunFrame,
-  ZoneStats
-} from '@momentum/formats/replay';
+﻿// @ts-nocheck
 import { ParsedResponse, RequestUtil } from './request.util';
 import { Gamemode, Tickrates, TrackType } from '@momentum/constants';
 import * as Random from '@momentum/random';
 import { arrayFrom } from '@momentum/util-fn';
 
 const DEFAULT_DELAY_MS = 10;
-const MAGIC = 0x524d4f4d;
 
 // Wish we could use Jest fake timers here, but won't work with a live DB, as we
 // rely on createdAt values generated from Prisma/Postgres
@@ -35,8 +28,7 @@ export interface RunTesterProps {
 }
 
 /**
- * Testing utility for creating a replay file in sync with a run run
- * Doesn't currently support ILs, and likely to change a lot in future versions
+ * Testing utility for creating a replay file in sync with a run session
  */
 export class RunTester {
   props: RunTesterProps;
@@ -151,7 +143,7 @@ export class RunTester {
     this.currTime = Date.now();
 
     const timeTotal = Date.now() - this.startTime;
-    const tickTotal = Math.ceil(timeTotal / 1000 / this.tickrate);
+    const tickTotal = Math.ceil(timeTotal / (1000 * this.tickrate));
 
     await this.req.post({
       url: `session/run/${this.sessionID}`,

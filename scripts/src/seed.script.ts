@@ -780,7 +780,8 @@ prismaWrapper(async (prisma: PrismaClient) => {
                         replayHash: createHash('sha1')
                           .update(Math.random().toString())
                           .digest('hex'),
-                        stats: {}, // TODO: Add proper stats here when we actually do stats seriously
+                        // TODO: Generate splits!!
+                        splits: {},
                         leaderboard: {
                           connect: {
                             mapID_gamemode_trackType_trackNum_style: {

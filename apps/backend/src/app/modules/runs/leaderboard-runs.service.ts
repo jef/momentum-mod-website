@@ -83,9 +83,9 @@ export class LeaderboardRunsService {
       where.user = { steamID: { in: query.steamIDs.map(BigInt) } };
     }
 
-    const select = {
+    const select: Prisma.LeaderboardRunSelect = {
       ...this.minimalRunsSelect,
-      stats: Boolean(query.expand)
+      splits: Boolean(query.expand)
     };
 
     const orderBy: Prisma.LeaderboardRunOrderByWithAggregationInput =

@@ -25,8 +25,14 @@ export const RunValidationErrors: Record<RunValidationErrorType, ErrorData> = {
     code: 1,
     message: 'invalid replay file'
   },
-  [RunValidationErrorType.BAD_META]: { code: 2, message: 'invalid metadata' },
-  [RunValidationErrorType.INVALID_STATS]: { code: 3, message: 'invalid stats' },
+  [RunValidationErrorType.BAD_META]: {
+    code: 2,
+    message: 'invalid metadata'
+  },
+  [RunValidationErrorType.INVALID_STATS]: {
+    code: 3,
+    message: 'invalid stats'
+  },
   [RunValidationErrorType.OUT_OF_SYNC]: {
     code: 4,
     message: 'replay data out of sync with submission times'

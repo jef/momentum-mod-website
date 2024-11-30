@@ -33,12 +33,13 @@ export type RunsGetQuery = {
   expand?: RunsGetExpand;
 };
 
-export interface CreateRunSession
-  extends Pick<RunSession, 'mapID' | 'gamemode' | 'trackType' | 'trackNum'> {
-  segment: number;
-}
+export type CreateRunSession = Pick<
+  RunSession,
+  'mapID' | 'gamemode' | 'trackType' | 'trackNum'
+>;
 
-export interface UpdateRunSession extends Pick<CreateRunSession, 'segment'> {
+export interface UpdateRunSession {
+  segment: number;
   checkpoint: number;
   time: number;
 }
