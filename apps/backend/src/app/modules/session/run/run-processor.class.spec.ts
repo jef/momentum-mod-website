@@ -23,14 +23,14 @@ describe('RunProcessor', () => {
   });
 
   beforeEach(() => {
-    jest.setSystemTime(ReplayFile.Stubs.BASE_TIME);
+    jest.setSystemTime(ReplayFile.Stubs.BaseTime);
   });
 
   const DefaultSession: CompletedRunSession = {
     gamemode: Gamemode.BHOP,
     trackType: TrackType.MAIN,
     trackNum: 1,
-    createdAt: new Date(ReplayFile.Stubs.BASE_TIME),
+    createdAt: new Date(ReplayFile.Stubs.BaseTime),
     timestamps: [],
     mapID: 1,
     userID: 1,
@@ -110,10 +110,10 @@ describe('RunProcessor', () => {
         expectPass({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -128,10 +128,10 @@ describe('RunProcessor', () => {
           session: {
             trackNum: 2,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -140,10 +140,10 @@ describe('RunProcessor', () => {
           session: {
             trackNum: 0,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -153,10 +153,10 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 20000 /* <- out of order */, segment: 0, checkpoint: 0 },
-              { time: 10000 /* <- out of order */, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 20000 /* <- out of order */, segment: 0, checkpoint: 1 },
+              { time: 10000 /* <- out of order */, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -166,11 +166,11 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 30100, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 20100, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -185,10 +185,10 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -204,9 +204,9 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -215,9 +215,9 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -226,8 +226,8 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 10000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 0, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -243,9 +243,9 @@ describe('RunProcessor', () => {
         expectPass({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -262,9 +262,9 @@ describe('RunProcessor', () => {
           session: {
             timestamps: [
               // First checkpoint is *always* the start, must always hit it
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 1 },
+              { time: 10000, segment: 1, checkpoint: 0 },
+              { time: 20000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -273,9 +273,9 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -291,11 +291,11 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 25000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 15000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -311,11 +311,11 @@ describe('RunProcessor', () => {
         expectPass({
           session: {
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 25000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 1, checkpoint: 0 },
-              { time: 40000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 15000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 1, checkpoint: 0 },
+              { time: 30000, segment: 1, checkpoint: 1 }
             ]
           },
           zones
@@ -329,8 +329,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 }
             ]
           }
         });
@@ -341,8 +341,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 1, checkpoint: 0 },
-              { time: 20000, segment: 1, checkpoint: 1 }
+              { time: 0, segment: 1, checkpoint: 0 },
+              { time: 10000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -355,7 +355,7 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             trackType: TrackType.STAGE,
-            timestamps: [{ time: 20000, segment: 0, checkpoint: 1 }]
+            timestamps: [{ time: 10000, segment: 0, checkpoint: 1 }]
           },
           zones
         });
@@ -368,7 +368,7 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             trackType: TrackType.STAGE,
-            timestamps: [{ time: 10000, segment: 0, checkpoint: 0 }]
+            timestamps: [{ time: 0, segment: 0, checkpoint: 0 }]
           },
           zones
         });
@@ -384,8 +384,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -394,7 +394,7 @@ describe('RunProcessor', () => {
         expectFail({
           session: {
             trackType: TrackType.STAGE,
-            timestamps: [{ time: 10000, segment: 0, checkpoint: 0 }]
+            timestamps: [{ time: 0, segment: 0, checkpoint: 0 }]
           },
           zones
         });
@@ -405,8 +405,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -415,7 +415,7 @@ describe('RunProcessor', () => {
         expectPass({
           session: {
             trackType: TrackType.STAGE,
-            timestamps: [{ time: 10000, segment: 0, checkpoint: 0 }]
+            timestamps: [{ time: 0, segment: 0, checkpoint: 0 }]
           },
           zones
         });
@@ -428,7 +428,7 @@ describe('RunProcessor', () => {
         expectPass({
           session: {
             trackType: TrackType.STAGE,
-            timestamps: [{ time: 10000, segment: 0, checkpoint: 0 }]
+            timestamps: [{ time: 0, segment: 0, checkpoint: 0 }]
           },
           zones
         });
@@ -445,9 +445,9 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 25000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 15000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -465,9 +465,9 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.STAGE,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 2500000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 1500000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -499,9 +499,9 @@ describe('RunProcessor', () => {
             trackType: TrackType.BONUS,
             trackNum: 1,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 0, checkpoint: 2 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 0, checkpoint: 2 }
             ]
           },
           zones
@@ -514,9 +514,9 @@ describe('RunProcessor', () => {
             trackType: TrackType.BONUS,
             trackNum: 2,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 0, checkpoint: 2 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 0, checkpoint: 2 }
             ]
           },
           zones
@@ -530,8 +530,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.BONUS,
             timestamps: [
-              { time: 20000, segment: 0, checkpoint: 1 },
-              { time: 30000, segment: 0, checkpoint: 2 }
+              { time: 10000, segment: 0, checkpoint: 1 },
+              { time: 20000, segment: 0, checkpoint: 2 }
             ]
           },
           zones
@@ -545,8 +545,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.BONUS,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 30000, segment: 0, checkpoint: 2 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 20000, segment: 0, checkpoint: 2 }
             ]
           },
           zones
@@ -560,8 +560,8 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.BONUS,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 30000, segment: 0, checkpoint: 2 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 20000, segment: 0, checkpoint: 2 }
             ]
           },
           zones
@@ -575,9 +575,9 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.BONUS,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 25000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 15000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -591,9 +591,9 @@ describe('RunProcessor', () => {
           session: {
             trackType: TrackType.BONUS,
             timestamps: [
-              { time: 10000, segment: 0, checkpoint: 0 },
-              { time: 20000, segment: 0, checkpoint: 2 },
-              { time: 2500000, segment: 0, checkpoint: 1 }
+              { time: 0, segment: 0, checkpoint: 0 },
+              { time: 10000, segment: 0, checkpoint: 2 },
+              { time: 1500000, segment: 0, checkpoint: 1 }
             ]
           },
           zones
@@ -605,10 +605,10 @@ describe('RunProcessor', () => {
   describe('validateReplayHeader', () => {
     let processor: RunProcessor;
     const timestamps = [
-      { time: 10000, segment: 0, checkpoint: 0 },
-      { time: 20000, segment: 0, checkpoint: 1 },
-      { time: 30000, segment: 1, checkpoint: 0 },
-      { time: 40000, segment: 1, checkpoint: 1 }
+      { time: 0, segment: 0, checkpoint: 0 },
+      { time: 10000, segment: 0, checkpoint: 1 },
+      { time: 20000, segment: 1, checkpoint: 0 },
+      { time: 30000, segment: 1, checkpoint: 1 }
     ];
     const runTime = ReplayFile.Stubs.ReplayHeaderStub.runTime * 1000;
 
@@ -664,7 +664,7 @@ describe('RunProcessor', () => {
         session: { timestamps },
         // Hack to get timestamp check to pass
         header: {
-          timestamp: BigInt(ReplayFile.Stubs.BASE_TIME + runTime + 10600)
+          timestamp: BigInt(ReplayFile.Stubs.BaseTime + runTime + 10600)
         }
       });
 
@@ -682,7 +682,7 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: { timestamps },
         header: {
-          timestamp: BigInt(ReplayFile.Stubs.BASE_TIME + runTime - 1001)
+          timestamp: BigInt(ReplayFile.Stubs.BaseTime + runTime - 1001)
         }
       });
 
@@ -695,7 +695,7 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: { timestamps },
         header: {
-          timestamp: BigInt(ReplayFile.Stubs.BASE_TIME + runTime + 100)
+          timestamp: BigInt(ReplayFile.Stubs.BaseTime + runTime + 100)
         }
       });
 
@@ -812,14 +812,99 @@ describe('RunProcessor', () => {
   describe('validateRunSplits', () => {
     let processor: RunProcessor;
 
-    function expectPass() {
-      expect(() => processor.validateReplayHeader()).not.toThrow();
+    function cAt(time: number): Date {
+      return new Date(ReplayFile.Stubs.BaseTime + time);
     }
 
-    function expectFail(error: ErrorType) {
-      expect(() => processor.validateReplayHeader()).toThrow(
-        new RunValidationError(error)
+    function expectPass() {
+      expect(() => processor.validateRunSplits()).not.toThrow();
+    }
+
+    function expectFail() {
+      expect(() => processor.validateRunSplits()).toThrow(
+        new RunValidationError(ErrorType.OUT_OF_SYNC)
       );
     }
+
+    it('should not throw for a valid splits', () => {
+      processor = createProcessor({
+        session: {
+          timestamps: [
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(10000) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+          ]
+        }
+      });
+
+      expectPass();
+    });
+
+    it('should throw for missing timestamps', () => {
+      processor = createProcessor();
+
+      expectFail();
+    });
+
+    it('should throw for wrong number of timestamps', () => {
+      processor = createProcessor({
+        session: {
+          timestamps: [
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(10000) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) }
+          ]
+        }
+      });
+
+      expectFail();
+    });
+
+    it('should throw for out of sync splits - negative desync', () => {
+      // Throws for any negative desync
+      processor = createProcessor({
+        session: {
+          timestamps: [
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(9999) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+          ]
+        }
+      });
+
+      expectFail();
+    });
+
+    it('should not throw for out of sync splits - acceptable positive desync', () => {
+      processor = createProcessor({
+        session: {
+          timestamps: [
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(14900) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+          ]
+        }
+      });
+
+      expectPass();
+    });
+
+    it('should throw for out of sync splits - unacceptable positive desync', () => {
+      processor = createProcessor({
+        session: {
+          timestamps: [
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
+            { time: 15000, segment: 0, checkpoint: 1, createdAt: cAt(15001) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+          ]
+        }
+      });
+
+      expectFail();
+    });
   });
 });

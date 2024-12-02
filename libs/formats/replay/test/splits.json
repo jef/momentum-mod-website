@@ -1,0 +1,134 @@
+{
+  "segments": [
+    {
+      "subsegments": [
+        {
+          "minorNum": 1,
+          "timeReached": 0,
+          "velocityWhenReached": [0, 0, 0],
+          "stats": {
+            "maxOverallSpeed": 837.5582885742188,
+            "maxHorizontalSpeed": 775.219482421875,
+            "overallDistanceTravelled": 0,
+            "horizontalDistanceTravelled": 0,
+            "jumps": 13,
+            "strafes": 0
+          }
+        }
+      ],
+      "segmentStats": {
+        "maxOverallSpeed": 837.5582885742188,
+        "maxHorizontalSpeed": 775.219482421875,
+        "overallDistanceTravelled": 0,
+        "horizontalDistanceTravelled": 0,
+        "jumps": 13,
+        "strafes": 0
+      },
+      "effectiveStartVelocity": [
+        233.19534301757812, 130.06422424316406, 289.9933776855469
+      ],
+      "checkpointsOrdered": true
+    },
+    {
+      "subsegments": [
+        {
+          "minorNum": 1,
+          "timeReached": 9.87499977927655,
+          "velocityWhenReached": [
+            -773.2323608398438, 55.17780303955078, 221.99337768554688
+          ],
+          "stats": {
+            "maxOverallSpeed": 933.714599609375,
+            "maxHorizontalSpeed": 887.7219848632812,
+            "overallDistanceTravelled": 0,
+            "horizontalDistanceTravelled": 0,
+            "jumps": 10,
+            "strafes": 0
+          }
+        }
+      ],
+      "segmentStats": {
+        "maxOverallSpeed": 933.714599609375,
+        "maxHorizontalSpeed": 887.7219848632812,
+        "overallDistanceTravelled": 0,
+        "horizontalDistanceTravelled": 0,
+        "jumps": 10,
+        "strafes": 0
+      },
+      "effectiveStartVelocity": [
+        -773.2323608398438, 55.17780303955078, 109.99337768554688
+      ],
+      "checkpointsOrdered": true
+    },
+    {
+      "subsegments": [
+        {
+          "minorNum": 1,
+          "timeReached": 16.76499962527305,
+          "velocityWhenReached": [
+            887.0045166015625, 30.818994522094727, 289.9933776855469
+          ],
+          "stats": {
+            "maxOverallSpeed": 974.7230834960938,
+            "maxHorizontalSpeed": 925.6637573242188,
+            "overallDistanceTravelled": 0,
+            "horizontalDistanceTravelled": 0,
+            "jumps": 8,
+            "strafes": 0
+          }
+        }
+      ],
+      "segmentStats": {
+        "maxOverallSpeed": 974.7230834960938,
+        "maxHorizontalSpeed": 925.6637573242188,
+        "overallDistanceTravelled": 0,
+        "horizontalDistanceTravelled": 0,
+        "jumps": 8,
+        "strafes": 0
+      },
+      "effectiveStartVelocity": [
+        886.9021606445312, 42.993438720703125, 193.99337768554688
+      ],
+      "checkpointsOrdered": true
+    },
+    {
+      "subsegments": [
+        {
+          "minorNum": 1,
+          "timeReached": 22.84499948937446,
+          "velocityWhenReached": [
+            -921.0367431640625, 29.999916076660156, 269.9933776855469
+          ],
+          "stats": {
+            "maxOverallSpeed": 998.979248046875,
+            "maxHorizontalSpeed": 952.2350463867188,
+            "overallDistanceTravelled": 0,
+            "horizontalDistanceTravelled": 0,
+            "jumps": 34,
+            "strafes": 0
+          }
+        }
+      ],
+      "segmentStats": {
+        "maxOverallSpeed": 998.979248046875,
+        "maxHorizontalSpeed": 952.2350463867188,
+        "overallDistanceTravelled": 0,
+        "horizontalDistanceTravelled": 0,
+        "jumps": 34,
+        "strafes": 0
+      },
+      "effectiveStartVelocity": [
+        -921.0367431640625, 29.999919891357422, 173.99337768554688
+      ],
+      "checkpointsOrdered": true
+    }
+  ],
+  "trackStats": {
+    "maxOverallSpeed": 998.979248046875,
+    "maxHorizontalSpeed": 952.2350463867188,
+    "overallDistanceTravelled": 0,
+    "horizontalDistanceTravelled": 0,
+    "jumps": 65,
+    "strafes": 0
+  }
+}

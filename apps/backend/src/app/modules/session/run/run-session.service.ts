@@ -44,8 +44,6 @@ export class RunSessionService {
     private readonly mapsService: MapsService
   ) {}
 
-  private readonly logger = new Logger('Run Session');
-
   //#region Create Session
 
   async createSession(
@@ -209,7 +207,7 @@ export class RunSessionService {
       // Validate replay file header against session data
       processor.validateReplayHeader();
 
-      // TODO: Validate replay splits against session data
+      processor.validateRunSplits();
 
       return processor.getProcessed();
     } catch (error) {

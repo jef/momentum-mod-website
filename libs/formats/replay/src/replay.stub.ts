@@ -1,27 +1,24 @@
 import { REPLAY_MAGIC, ReplayHeader } from './index';
 import { Gamemode, RunSplits, TrackType } from '@momentum/constants';
 
-export const BASE_TIME = 1000000000000;
-export const BIG_BASE_TIME = BigInt(BASE_TIME);
+export const BaseTime = 1000000000000;
 
 export const ReplayHeaderStub: ReplayHeader = {
   magic: REPLAY_MAGIC,
   formatVersion: -1,
-  timestamp: BIG_BASE_TIME + 40000n,
+  timestamp: BigInt(BaseTime) + 40000n,
   mapName: 'bhop_map',
   mapHash: 'A'.repeat(40),
   gamemode: Gamemode.BHOP,
   tickInterval: 0.00999999991324,
   playerSteamID: 1n,
-  playerName: 'Bono',
+  playerName: 'Abstract Barry',
   trackType: TrackType.MAIN,
   trackNum: 1,
   runTime: 40
 };
 
-/**
- * RunSplits validly corresponding main track run of to ZonesStub
- */
+/** RunSplits validly corresponding main track run of to ZonesStub */
 export const RunSplitsStub: RunSplits = {
   trackStats: {
     jumps: 1,
@@ -38,12 +35,12 @@ export const RunSplitsStub: RunSplits = {
       subsegments: [
         {
           velocityWhenReached: { x: 0, y: 0, z: 3500 },
-          timeReached: BASE_TIME + 1000,
+          timeReached: 0,
           minorNum: 1
         },
         {
           velocityWhenReached: { x: 0, y: 0, z: 3500 },
-          timeReached: BASE_TIME + 2000,
+          timeReached: 10000,
           minorNum: 2
         }
       ],
@@ -62,12 +59,12 @@ export const RunSplitsStub: RunSplits = {
       subsegments: [
         {
           velocityWhenReached: { x: 0, y: 0, z: 3500 },
-          timeReached: BASE_TIME + 3000,
+          timeReached: 20000,
           minorNum: 1
         },
         {
           velocityWhenReached: { x: 0, y: 0, z: 3500 },
-          timeReached: BASE_TIME + 4000,
+          timeReached: 30000,
           minorNum: 2
         }
       ],

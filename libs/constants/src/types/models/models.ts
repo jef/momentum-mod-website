@@ -518,6 +518,7 @@ export interface RunSegment {
   // This is velocity when effectively starting this segment (when *leaving* the
   // first zone)
   effectiveStartVelocity: vec3;
+
   // Whether this segment's checkpoints have a logical order. This lets split
   // comparison logic know if apparent gaps are due to skipped checkpoints
   // (align subsegments by minorNum) or are just unordered checkpoints (don't

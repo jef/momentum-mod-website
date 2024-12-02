@@ -59,12 +59,21 @@ export class RunProcessor {
     // out, ideally as soon as it happens. If it's something nefarious don't
     // help them out with detailed errors.
     //
-    // Note that that currently, the timestamps do NOT include hitting the end
-    // zone. The game is stupid and can't send a multipart form, and needs to
-    // send a replay file, so we determine the final time by parsing the replay,
-    // rather than a timestamp. This will probably change in the future!
+    // Note that timestamps do NOT include hitting the end zone - hitting the
+    // end zone calls the /end endpoint with the replay, and we parse the replay
+    // header to determine the final time.
 
     if (timestamps.length === 0) {
+      throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
+    }
+
+    // First checkpoint is always the start zone, regardless of track type
+    if (timestamps[0].checkpoint !== 0) {
+      throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
+    }
+
+    // First timeReached should always be 0
+    if (timestamps[0].time !== 0) {
       throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
     }
 
@@ -254,7 +263,7 @@ export class RunProcessor {
       headerTimestamp > now
     ) {
       // Curious how often we see this fail, current value may be a bit harsh.
-      RunProcessor.logger.log(
+      RunProcessor.logger.warn(
         `Rejecting run with submit delay of ${submitDelay / 1000}s. ` +
           `SessionID: ${this.session.id.toString()}, ` +
           `UserID: ${this.user.id.toString()}, ` +
@@ -270,18 +279,31 @@ export class RunProcessor {
   }
 
   validateRunSplits() {
-    const acceptableDesync = 5000; // 5s
+    const startTime = this.session.createdAt.getTime();
+
+    const numSubSegs = this.splits.segments
+      .map(({ subsegments }) => subsegments.length)
+      .reduce((a, c) => a + c, 0);
+
+    if (numSubSegs !== this.session.timestamps.length)
+      throw new RunValidationError(ErrorType.OUT_OF_SYNC);
 
     for (const { segment, checkpoint, createdAt } of this.session.timestamps) {
-      const splitSubSeg =
+      const splitSubseg =
         this.splits.segments?.[segment]?.subsegments?.[checkpoint];
 
-      // TODO: Not sure if this is right, or if check is needed...
-      if (!splitSubSeg || splitSubSeg.minorNum !== checkpoint - 1)
-        throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
+      if (!splitSubseg || splitSubseg.minorNum !== checkpoint + 1)
+        throw new RunValidationError(ErrorType.OUT_OF_SYNC);
 
-      const desync = createdAt.getTime() - splitSubSeg.timeReached;
-      if (desync < 0 || desync > acceptableDesync)
+      const sessionTime = createdAt.getTime() - startTime;
+      const desync = sessionTime - splitSubseg.timeReached;
+      // If the desync is negative, the session time is less than the split
+      // time, which is impossible - request arriving before the split was made
+      // would require time travel.
+      // Then, allow desync of 5s, max acceptable time between replay split
+      // being written, and request hitting out server. Again, hardcoded
+      // constant also used by tests, if changing, change tests.
+      if (desync < 0 || desync > 5000)
         throw new RunValidationError(ErrorType.OUT_OF_SYNC);
     }
   }

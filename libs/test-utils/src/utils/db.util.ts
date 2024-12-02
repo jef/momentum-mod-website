@@ -232,11 +232,11 @@ export class DbUtil {
    * Create a map with all the leaderboards that would be generated from
    * ZonesStub, in the given modes (defaults to just ahop)
    */
-  createMapWithFullLeaderboards(
+  async createMapWithFullLeaderboards(
     mmap?: Omit<CreateMapMMapArgs, 'leaderboards' | 'zones'>,
     gamemodes = [Gamemode.AHOP]
   ) {
-    return this.createMap({
+    const map = await this.createMap({
       ...mmap,
       versions: {
         create: {
@@ -286,6 +286,13 @@ export class DbUtil {
         }
       }
     });
+
+    await this.prisma.mMap.update({
+      data: { currentVersionID: map.versions[0].id },
+      where: { id: map.id }
+    });
+
+    return map;
   }
 
   //#endregion

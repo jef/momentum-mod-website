@@ -1,15 +1,15 @@
-﻿// @ts-nocheck
-import { ParsedResponse, RequestUtil } from './request.util';
-import { Gamemode, Tickrates, TrackType } from '@momentum/constants';
+﻿import { ParsedResponse, RequestUtil } from './request.util';
+import {
+  Gamemode,
+  RunSubsegment,
+  Tickrates,
+  TrackType
+} from '@momentum/constants';
 import * as Random from '@momentum/random';
-import { arrayFrom } from '@momentum/util-fn';
+import { arrayFrom, sleep } from '@momentum/util-fn';
+import { REPLAY_MAGIC, ReplayHeader } from '@momentum/formats/replay';
 
 const DEFAULT_DELAY_MS = 10;
-
-// Wish we could use Jest fake timers here, but won't work with a live DB, as we
-// rely on createdAt values generated from Prisma/Postgres
-const sleep = (duration: number) =>
-  new Promise((resolve) => setTimeout(resolve, duration));
 
 export interface RunTesterProps {
   token?: string;
@@ -18,63 +18,33 @@ export interface RunTesterProps {
   mapHash: string;
   steamID: bigint;
   playerName: string;
-  runDate: string;
   gamemode: Gamemode;
   trackType: TrackType;
   trackNum: number;
-  runFlags: number;
-  startTick: number;
-  tickRate?: number; // Otherwise uses gamemode's tickrate
 }
 
 /**
- * Testing utility for creating a replay file in sync with a run session
+ * Testing utility which fires run timestamp update calls to the server, then
+ * generates replay header and splits in sync with the server's run updates.
  */
 export class RunTester {
   props: RunTesterProps;
 
-  replay: Replay;
-  replayFile: ReplayFileWriter;
-
   sessionID: number;
 
-  tickrate: number;
-
   startTime: number;
-  startTick: number;
-  stopTick: number;
+  currTime: number;
 
   currSeg: number;
   currCP: number;
-  currTime: number;
+
+  splits = { segments: [] };
 
   private req: RequestUtil;
 
   constructor(req: RequestUtil, props: RunTesterProps) {
     this.req = req;
     this.props = props;
-    this.replayFile = new ReplayFileWriter();
-    this.tickrate = this.props.tickRate ?? Tickrates.get(props.gamemode);
-    this.replay = {
-      magic: null,
-      version: null,
-      header: {
-        mapName: null,
-        mapHash: null,
-        playerName: null,
-        steamID: null,
-        tickRate: null,
-        runFlags: null,
-        runDate: null,
-        startTick: null,
-        stopTick: null,
-        trackNum: null,
-        zoneNum: null
-      },
-      overallStats: null,
-      zoneStats: [],
-      frames: []
-    };
   }
 
   static async run(args: {
@@ -85,6 +55,7 @@ export class RunTester {
     startSeg?: number;
   }) {
     const runTester = new RunTester(args.req, args.props);
+
     await runTester.startRun({ startSeg: args.startSeg });
 
     await runTester.doZones(args.zones, args.delay ?? DEFAULT_DELAY_MS);
@@ -95,7 +66,6 @@ export class RunTester {
   async startRun(args?: { startSeg?: number }) {
     this.currSeg = args?.startSeg ?? 0;
     this.currCP = 0;
-    this.startTick = this.props.startTick ?? 0;
     this.startTime = Date.now();
 
     const res = await this.req.post({
@@ -104,8 +74,7 @@ export class RunTester {
         mapID: this.props.mapID,
         gamemode: this.props.gamemode,
         trackType: this.props.trackType,
-        trackNum: this.props.trackNum,
-        segment: args?.startSeg ?? 0
+        trackNum: this.props.trackNum
       },
       status: 200,
       token: this.props.token ?? ''
@@ -124,7 +93,7 @@ export class RunTester {
 
   async doCP(args?: { delay?: number; setCP?: number }) {
     this.currCP = args?.setCP ?? this.currCP + 1;
-    return this.doUpdate(args?.delay ?? DEFAULT_DELAY_MS);
+    return this.doUpdate(false, args?.delay ?? DEFAULT_DELAY_MS);
   }
 
   async startSegment(args?: {
@@ -134,16 +103,16 @@ export class RunTester {
   }) {
     this.currSeg = args?.setSeg ?? this.currSeg + 1;
     this.currCP = args?.setCP ?? 0;
-    return this.doUpdate(args?.delay ?? DEFAULT_DELAY_MS);
+    return this.doUpdate(true, args?.delay ?? DEFAULT_DELAY_MS);
   }
 
-  async doUpdate(delay = DEFAULT_DELAY_MS) {
+  async doUpdate(isNewSegment: boolean, delay = DEFAULT_DELAY_MS) {
+    // Wish we could use Jest fake timers here, but won't work with a live DB,
+    // as we rely on createdAt values generated from Prisma/Postgres
     await sleep(delay);
 
     this.currTime = Date.now();
-
     const timeTotal = Date.now() - this.startTime;
-    const tickTotal = Math.ceil(timeTotal / (1000 * this.tickrate));
 
     await this.req.post({
       url: `session/run/${this.sessionID}`,
@@ -152,44 +121,54 @@ export class RunTester {
       token: this.props.token ?? ''
     });
 
-    this.replay.zoneStats.push({
-      zoneNum: 0, // TODO: This doesn't make sense but I don't know how we're changing replays for 0.10.0 yet.
-      baseStats: RunTester.createStats(
-        new Date(),
-        this.replay.zoneStats.length > 0
-          ? this.replay.zoneStats.at(-1).baseStats.totalTime
-          : 0
-      )
-    });
+    const subseg: RunSubsegment = {
+      velocityWhenReached: { x: 0, y: 0, z: 0 },
+      timeReached: timeTotal,
+      minorNum: this.currCP + 1
+    };
+
+    if (isNewSegment) {
+      this.splits.segments.push({
+        effectiveStartVelocity: { x: 0, y: 0, z: 0 },
+        checkpointsOrdered: true,
+        stats: {
+          jumps: 0,
+          strafes: 0,
+          horizontalDistanceTravelled: 0,
+          overallDistanceTravelled: 0,
+          maxOverallSpeed: 0,
+          maxHorizontalSpeed: 0
+        },
+        subsegments: [subseg]
+      });
+    } else {
+      this.splits.segments.at(-1).subsegments.push(subseg);
+    }
   }
 
   async endRun(args?: {
     delay?: number;
     beforeSubmit?: (self: RunTester) => void;
     beforeSave?: (self: RunTester) => void;
-    writeStats?: boolean;
-    writeFrames?: boolean;
   }): Promise<ParsedResponse> {
     const delay = args?.delay ?? DEFAULT_DELAY_MS;
 
     await sleep(delay);
     const timeTotal = Date.now() - this.startTime;
-    this.stopTick = Math.ceil(timeTotal / 1000 / this.tickrate);
 
-    this.replay.magic = MAGIC;
-    this.replay.version = 1;
-    this.replay.header = {
+    const header: ReplayHeader = {
+      magic: REPLAY_MAGIC,
+      formatVersion: -1,
+      timestamp: BigInt(Date.now()),
       mapName: this.props.mapName,
       mapHash: this.props.mapHash,
+      gamemode: this.props.gamemode,
+      tickInterval: Tickrates.get(this.props.gamemode),
+      playerSteamID: this.props.steamID,
       playerName: this.props.playerName,
-      steamID: this.props.steamID,
-      tickRate: this.tickrate,
-      runFlags: this.props.runFlags,
-      runDate: this.props.runDate,
-      startTick: this.startTick,
-      stopTick: this.stopTick,
+      trackType: this.props.trackType,
       trackNum: this.props.trackNum,
-      zoneNum: 0 // TODO: See above TODO
+      runTime: timeTotal / 1000
     };
 
     // TODO: Leaving several parts of this file commented out until we refactor
@@ -239,7 +218,7 @@ export class RunTester {
 
     return this.req.postOctetStream({
       url: `session/run/${this.sessionID}/end`,
-      body: this.replayFile.buffer,
+      body: this.replayBuffer.buffer,
       token: this.props.token ?? ''
     });
   }
@@ -253,7 +232,7 @@ export class RunTester {
 
   private writeReplayFile(writeStats = true, writeFrames = true) {
     // Header
-    this.replayFile.writeHeader(this.replay);
+    this.replayBuffer.writeHeader(this.replay);
 
     // TODO: See above
     // // Stats
