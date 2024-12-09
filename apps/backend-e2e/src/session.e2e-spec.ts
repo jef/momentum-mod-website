@@ -9,6 +9,7 @@ import {
   randomSteamID,
   RequestUtil,
   resetKillswitches,
+  RunTester,
   RunTesterProps
 } from '@momentum/test-utils';
 import {
@@ -17,7 +18,6 @@ import {
   MapStatus,
   Role,
   RunValidationErrorType,
-  Tickrates,
   TrackType
 } from '@momentum/constants';
 import { PrismaClient } from '@prisma/client';
@@ -469,14 +469,10 @@ describe('Session', () => {
           gamemode: Gamemode.AHOP,
           trackType: TrackType.MAIN,
           trackNum: 1,
-          runDate: Date.now().toString(),
-          runFlags: 0,
           mapID: map.id,
           mapName: map.name,
           mapHash: map.currentVersion.bspHash,
           steamID: user.steamID,
-          tickRate: Tickrates.get(map.type),
-          startTick: 0,
           playerName: 'Abstract Barry'
         });
 
@@ -830,7 +826,7 @@ describe('Session', () => {
 
       it('should reject if there is no body', async () => {
         const res = await submitWithOverrides({
-          beforeSubmit: (self) => (self.replayBuffer.buffer = Buffer.from(''))
+          beforeSubmit: (self) => (self.replayBuffer = Buffer.from(''))
         });
 
         expect(res.statusCode).toBe(400);

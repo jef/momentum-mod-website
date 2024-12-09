@@ -25,7 +25,7 @@ export interface ReplayHeader {
   //                         Size  Offset  Description
   magic: int32;           // 4     0
   formatVersion: int32;   // 4     4
-  timestamp: int64;       // 8     8       Unix time written when the replay file is created (not the start of the run!)
+  timestamp: int64;       // 8     8       Unix time written when the replay file is created (in seconds!) (not the start of the run!)
   mapName: string;        // 64    16
   mapHash: string;        // 41    80
   gamemode: uint8;        // 1     121

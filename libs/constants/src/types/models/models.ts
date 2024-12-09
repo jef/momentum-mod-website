@@ -455,7 +455,7 @@ export interface LeaderboardRun {
   downloadURL: string;
   replayHash: string;
   flags: Style[];
-  splits: RunSplits;
+  splits?: RunSplits;
   rank: number;
   rankXP: number;
   userID: number;

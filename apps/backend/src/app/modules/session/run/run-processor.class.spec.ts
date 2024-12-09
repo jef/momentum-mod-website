@@ -18,12 +18,14 @@ import { PartialDeep } from 'type-fest';
 import deepmerge from '@fastify/deepmerge';
 
 describe('RunProcessor', () => {
+  const BASE_TIME = ReplayFile.Stubs.BaseTime;
+
   beforeAll(() => {
     jest.useFakeTimers();
   });
 
   beforeEach(() => {
-    jest.setSystemTime(ReplayFile.Stubs.BaseTime);
+    jest.setSystemTime(BASE_TIME);
   });
 
   const DefaultSession: CompletedRunSession = {
@@ -129,9 +131,9 @@ describe('RunProcessor', () => {
             trackNum: 2,
             timestamps: [
               { time: 0, segment: 0, checkpoint: 0 },
-              { time: 10000, segment: 0, checkpoint: 1 },
-              { time: 20000, segment: 1, checkpoint: 0 },
-              { time: 30000, segment: 1, checkpoint: 1 }
+              { time: 1000, segment: 0, checkpoint: 1 },
+              { time: 1000, segment: 1, checkpoint: 0 },
+              { time: 1000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -141,9 +143,9 @@ describe('RunProcessor', () => {
             trackNum: 0,
             timestamps: [
               { time: 0, segment: 0, checkpoint: 0 },
-              { time: 10000, segment: 0, checkpoint: 1 },
-              { time: 20000, segment: 1, checkpoint: 0 },
-              { time: 30000, segment: 1, checkpoint: 1 }
+              { time: 1000, segment: 0, checkpoint: 1 },
+              { time: 1000, segment: 1, checkpoint: 0 },
+              { time: 1000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -154,9 +156,9 @@ describe('RunProcessor', () => {
           session: {
             timestamps: [
               { time: 0, segment: 0, checkpoint: 0 },
-              { time: 20000 /* <- out of order */, segment: 0, checkpoint: 1 },
-              { time: 10000 /* <- out of order */, segment: 1, checkpoint: 0 },
-              { time: 30000, segment: 1, checkpoint: 1 }
+              { time: 1000 /* <- out of order */, segment: 0, checkpoint: 1 },
+              { time: 1000 /* <- out of order */, segment: 1, checkpoint: 0 },
+              { time: 1000, segment: 1, checkpoint: 1 }
             ]
           }
         });
@@ -812,7 +814,7 @@ describe('RunProcessor', () => {
   describe('validateRunSplits', () => {
     let processor: RunProcessor;
 
-    function cAt(time: number): Date {
+    function cat(time: number): Date {
       return new Date(ReplayFile.Stubs.BaseTime + time);
     }
 
@@ -830,10 +832,10 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: {
           timestamps: [
-            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
-            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(10000) },
-            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
-            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cat(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cat(10000) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cat(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cat(30000) }
           ]
         }
       });
@@ -851,9 +853,9 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: {
           timestamps: [
-            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
-            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(10000) },
-            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) }
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cat(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cat(10000) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cat(20000) }
           ]
         }
       });
@@ -866,10 +868,10 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: {
           timestamps: [
-            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
-            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(9999) },
-            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
-            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cat(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cat(9999) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cat(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cat(30000) }
           ]
         }
       });
@@ -881,10 +883,10 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: {
           timestamps: [
-            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
-            { time: 10000, segment: 0, checkpoint: 1, createdAt: cAt(14900) },
-            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
-            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cat(0) },
+            { time: 10000, segment: 0, checkpoint: 1, createdAt: cat(14900) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cat(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cat(30000) }
           ]
         }
       });
@@ -896,10 +898,10 @@ describe('RunProcessor', () => {
       processor = createProcessor({
         session: {
           timestamps: [
-            { time: 0, segment: 0, checkpoint: 0, createdAt: cAt(0) },
-            { time: 15000, segment: 0, checkpoint: 1, createdAt: cAt(15001) },
-            { time: 20000, segment: 1, checkpoint: 0, createdAt: cAt(20000) },
-            { time: 30000, segment: 1, checkpoint: 1, createdAt: cAt(30000) }
+            { time: 0, segment: 0, checkpoint: 0, createdAt: cat(0) },
+            { time: 15000, segment: 0, checkpoint: 1, createdAt: cat(15001) },
+            { time: 20000, segment: 1, checkpoint: 0, createdAt: cat(20000) },
+            { time: 30000, segment: 1, checkpoint: 1, createdAt: cat(30000) }
           ]
         }
       });

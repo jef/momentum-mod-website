@@ -2,8 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  InternalServerErrorException,
-  Logger
+  InternalServerErrorException
 } from '@nestjs/common';
 import { Leaderboard, LeaderboardRun, Prisma, User } from '@prisma/client';
 import {

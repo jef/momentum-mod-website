@@ -77,9 +77,14 @@ export class RunProcessor {
       throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
     }
 
-    // Check time is always increasing
     for (let i = 1; i < timestamps.length; i++) {
-      if (timestamps[i].time < timestamps[i - 1].time) {
+      // Positive time for other timestamps
+      if (timestamps[i].time < 0) {
+        throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
+      }
+
+      // Check creationDate is always increasing
+      if (timestamps[i].createdAt < timestamps[i - 1].createdAt) {
         throw new RunValidationError(ErrorType.BAD_TIMESTAMPS);
       }
     }
@@ -240,12 +245,12 @@ export class RunProcessor {
     // everywhere, try to stay consistent and convert any second-based values
     // to ms immediately.
     const headerRunTime = header.runTime * 1000;
-    const headerTimestamp = Number(header.timestamp); // Unix time when replay file was written
-    const sessionStart = this.session.createdAt.getTime();
+
+    // Header timestamp is unix time in seconds
+    const headerTimestamp = Number(header.timestamp) * 1000;
     const now = Date.now();
 
-    const sessionTime = now - sessionStart;
-    const submitDelay = sessionTime - headerRunTime;
+    const submitDelay = now - headerTimestamp;
     const acceptableSubmitDelay = 10_000 + Math.min(headerRunTime / 60, 20_000);
 
     if (
@@ -257,8 +262,6 @@ export class RunProcessor {
       // have more time to submit, up to a max of 20,000 ms. These constants are
       // assumed by unit tests, if changing them, change tests to.
       submitDelay > acceptableSubmitDelay ||
-      // Max 1 second from replay file being written to now.
-      now - headerTimestamp > 1000 ||
       // Timestamp in the future makes no sense.
       headerTimestamp > now
     ) {
@@ -296,14 +299,13 @@ export class RunProcessor {
         throw new RunValidationError(ErrorType.OUT_OF_SYNC);
 
       const sessionTime = createdAt.getTime() - startTime;
-      const desync = sessionTime - splitSubseg.timeReached;
-      // If the desync is negative, the session time is less than the split
-      // time, which is impossible - request arriving before the split was made
-      // would require time travel.
+      const desync = sessionTime - splitSubseg.timeReached * 1000;
+      // Occasionally we get a slight negative desync, probably
+      // due to C time() function vs JS Date.now() - allow a 1s margin.
       // Then, allow desync of 5s, max acceptable time between replay split
       // being written, and request hitting out server. Again, hardcoded
       // constant also used by tests, if changing, change tests.
-      if (desync < 0 || desync > 5000)
+      if (desync < -1000 || desync > 5000)
         throw new RunValidationError(ErrorType.OUT_OF_SYNC);
     }
   }

@@ -322,7 +322,7 @@ export class DbUtil {
         mmap: { connect: { id: map.id } },
         time: args?.time ?? 1,
         flags: args?.flags ?? [0],
-        splits: (args?.splits as unknown as JsonValue) ?? {},
+        splits: (args?.splits as unknown as JsonValue) ?? { segments: [] },
         replayHash: randomHash(),
         rank: args?.rank,
         rankXP: 0,
